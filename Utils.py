@@ -10,32 +10,9 @@
 #-------------------------------------------------------------------------------
 
 import os
-##import zipfile
-import shutil
 import numpy as np
 import tkinter as tk
 from itertools import  combinations
-
-def zipData(zipFileName, pathToZip):
-    shutil.make_archive(zipFileName, 'zip', pathToZip)
-
-def totuple(a):
-    try:
-        return tuple(totuple(i) for i in a)
-    except TypeError:
-        return a
-
-
-def clamp(var, mini, maxi):
-    '''
-    Ensures that var is between mini and maxi
-
-    '''
-    if var < mini:
-        var = mini
-    if var > maxi:
-        var = maxi
-    return var
 
 
 def savePop(pop, popName = 'pop_0'):
