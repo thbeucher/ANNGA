@@ -20,68 +20,66 @@ class LifeGame:
         self.nb_cell_alive = nb_cell_alive
         self.size_cell = size_cell
         self.create_win_and_initiate()
-        self.get_map_neighbour()
+        self.exit_condition = False
+        self.event()
 
     def runGame(self):
-        for i in range(50):
-            print("generation: ", i)
-            self.get_map_neighbour()
+        time.sleep(1)
+        while self.exit_condition == False:
             self.rule_of_game()
             self.apply_new_gen()
             self.canv.update()
-            print("nb cell alive: ", self.nb_alive)
             time.sleep(0.1)
 
     def apply_new_gen(self):
-        nb_alive = 0
         for el1 in range(self.nb_case_line):
             for el2 in range(self.nb_case_line):
                 if self.tabGame[el1][el2][1] == 0:
                     self.canv.itemconfig(self.tabGame[el1][el2][0], fill="white")
                 else:
-                    nb_alive += 1
                     self.canv.itemconfig(self.tabGame[el1][el2][0], fill="blue")
-        self.nb_alive = nb_alive
+
+    def check_neighbors(self, c1, c2):
+        nb_neighbors_alive = 0
+        for i in range(-1,2,1):
+            for j in range(-1,2,1):
+                #check if case exist
+                if c1+i >= 0 and c1+i < self.nb_case_line\
+                   and c2+j >= 0 and c2+j < self.nb_case_line:
+                    if c1+i == c1 and c2+j == c2:
+                        a = 1
+                    else:
+                        if self.tabGame[c1+i][c2+j][1] == 1:
+                            nb_neighbors_alive += 1
+        return nb_neighbors_alive
 
     def rule_of_game(self):
-        #si la cellule est seule, elle meurt
-        #si la cellule a une voisine, elle survit
-        #si la cellule a deux voisine, elle enfante
-        for el1 in range(self.nb_case_line):
-            for el2 in range(self.nb_case_line):
-                if self.tabGame[el1][el2][1] == 1:
-                    if self.tabGame[el1][el2][2] == 0:
-                        self.tabGame[el1][el2][1] = 0
-                    elif self.tabGame[el1][el2][2] > 1:
-                        test = 0
-                        for e1, e2 in zip(np.random.randint(0, self.nb_case_line, 100), np.random.randint(0, self.nb_case_line, 100)):
-                            if test == 0 and self.tabGame[e1][e2][1] == 0:
-                                self.tabGame[e1][e2][1] == 1
-                                test += 1
-
-    def get_map_neighbour(self):
-        for el1 in range(self.nb_case_line):
-            for el2 in range(self.nb_case_line):
-                neighbour_list = [[el1-1, el2], [el1+1, el2], [el1, el2-1], [el1, el2+1]]
-                nb = 0
-                for el in neighbour_list:
-                    if el[0] >= 0 and el[0] < self.nb_case_line and el[1] >= 0 and el[1] < self.nb_case_line:
-                        if self.tabGame[el[0]][el[1]][1] == 1:
-                            nb += 1
-                self.tabGame[el1][el2][2] = nb
+        for c1 in range(self.nb_case_line):
+            for c2 in range(self.nb_case_line):
+                neighbors = self.check_neighbors(c1, c2)
+                if self.tabGame[c1][c2][1] == 0:
+                    if neighbors == 3:
+                        self.tabGame[c1][c2][1] = 1
+                else:
+                    if neighbors < 2 or neighbors > 3:
+                        self.tabGame[c1][c2][1] = 0
 
     def create_win_and_initiate(self):
         self.win = tk.Tk()
-        self.canv = tk.Canvas(self.win, width = self.size_fen, height = self.size_fen)
+        self.canv = tk.Canvas(self.win, width = self.size_fen,\
+                              height = self.size_fen)
         self.canv.pack()
-
         self.create_pavement()
-        r1 = np.random.randint(0, self.nb_case_line, self.nb_cell_alive)
-        r2 = np.random.randint(0, self.nb_case_line, self.nb_cell_alive)
-        for el1, el2 in zip(r1,r2):
-            #white for dead cell and blue for alive one
-            self.canv.itemconfig(self.tabGame[el1][el2][0], fill="blue")
-            self.tabGame[el1][el2][1] = 1
+        #white for dead cell and blue for alive one
+        self.init_cell_alive()
+        self.canv.update()
+
+    def init_cell_alive(self):
+        r1, r2 = np.random.randint(0, self.nb_case_line, self.nb_cell_alive),\
+                 np.random.randint(0, self.nb_case_line, self.nb_cell_alive)
+        for i, j in zip(r1, r2):
+            self.tabGame[i][j][1] = 1
+            self.canv.itemconfig(self.tabGame[i][j][0], fill="blue")
 
     def create_pavement(self):
         self.tabGame = []
@@ -98,7 +96,13 @@ class LifeGame:
                                                 x+self.size_cell,\
                                                 y+self.size_cell), 0, 0])
 
+    def exit(self, bla):
+        self.exit_condition = True
 
-a = LifeGame(300,50,10)
+    def event(self):
+        self.win.bind("<Escape>", self.exit)
+
+
+a = LifeGame(300,300,10)
 a.runGame()
     
