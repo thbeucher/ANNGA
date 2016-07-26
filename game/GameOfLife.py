@@ -13,6 +13,8 @@ import numpy as np
 import tkinter as tk
 import time
 import copy
+import sys
+
 
 class LifeGame:
 
@@ -81,7 +83,7 @@ class LifeGame:
         self.tabGame = copy.deepcopy(tabGameTmp)
 
     def create_win_and_initiate(self, init_choice):
-        self.win = tk.Tk()
+        self.win = tk.Tk(baseName="")
         self.canv = tk.Canvas(self.win, width = self.size_fen,\
                               height = self.size_fen)
         self.canv.pack()
@@ -145,7 +147,6 @@ class LifeGame:
         #b = list(a) or b = copy.copy(a) copy only the first dim of the list
         #to copy obj in the list copied, use copy.deepcopy()
 
-
-a = LifeGame(500,300,5,2)
+a = LifeGame(500,300,5,1)
 a.runGame()
     

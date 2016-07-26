@@ -1,0 +1,3 @@
+gcc GameOfLife.c -IC:\Python34\include -LC:\Python34\libs -lpython34 -o GameOfLife.exe
+
+cython GameOfLife.py --embed=WinMain
