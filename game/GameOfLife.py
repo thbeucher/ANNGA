@@ -29,8 +29,7 @@ class LifeGame:
     def runGame(self):
         time.sleep(1)
         while self.exit_condition == False:
-            self.rule_of_game_sync()
-            self.apply_new_gen()
+            self.allrunSync()
             self.canv.update()
 
     def apply_new_gen(self):
@@ -146,6 +145,21 @@ class LifeGame:
         self.canv.update()
         #b = list(a) or b = copy.copy(a) copy only the first dim of the list
         #to copy obj in the list copied, use copy.deepcopy()
+
+    def allrunSync(self):
+        tabGameTmp = copy.deepcopy(self.tabGame)
+        for c1 in range(self.nb_case_line):
+            for c2 in range(self.nb_case_line):
+                neighbors = self.check_neighbors(c1, c2)
+                if self.tabGame[c1][c2][1] == 0:
+                    if neighbors == 3:
+                        tabGameTmp[c1][c2][1] = 1
+                        self.canv.itemconfig(self.tabGame[c1][c2][0], fill="blue")
+                else:
+                    if neighbors < 2 or neighbors > 3:
+                        tabGameTmp[c1][c2][1] = 0
+                        self.canv.itemconfig(self.tabGame[c1][c2][0], fill="white")
+        self.tabGame = copy.deepcopy(tabGameTmp)
 
 a = LifeGame(500,300,5,1)
 a.runGame()

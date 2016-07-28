@@ -8,3 +8,4 @@ for el in os.listdir(os.getcwd()):
         print("Generation de l'executable")
         com2 = "gcc " + el[:el.index(".")] + ".c -IC:\Python34\include -LC:\Python34\libs -lpython34 -o " + el[:el.index(".")] + ".exe"
         os.system(com2)
+        print("Fin de generation!")
